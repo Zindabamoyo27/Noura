@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noura - Advanced Expense Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            color: #e5e7eb;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Modern Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            overflow: hidden;
+        }
+
+        .bg-animation::before,
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation::before {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            top: -250px;
+            left: -250px;
+            animation-delay: 0s;
+        }
+
+        .bg-animation::after {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+            bottom: -300px;
+            right: -300px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -50px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Login Page - Modern Design */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .login-box {
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 48px 40px;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 100px rgba(99, 102, 241, 0.1);
+            max-width: 440px;
+            width: 100%;
+            animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-image {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 50px rgba(99, 102, 241, 0.4); }
+        }
+
+        .logo-image img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .logo h1 {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .logo p {
+            color: rgba(229, 231, 235, 0.6);
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: rgba(229, 231, 235, 0.8);
+            font-weight: 600;
+            font-size: 0.875em;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1.5px solid rgba(99, 102, 241, 0.3);
+            border-radius: 14px;
+            font-size: 1em;
+            color: #e5e7eb;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(30, 41, 59, 0.7);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(229, 231, 235, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Dashboard - Modern Design */
+        .dashboard {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 24px 32px;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2em;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 18px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1em;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: #e5e7eb;
+            font-size: 0.95em;
+        }
+
+        .logout-btn {
+            padding: 10px 24px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            font-size: 0.875em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 28px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card h3 {
+            color: rgba(229, 231, 235, 0.6);
+            font-size: 0.75em;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .stat-card .amount {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #e5e7eb;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card.total {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.4);
+        }
+
+        .stat-card.total h3 {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-card.total .amount {
+            color: #ffffff;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 32px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #e5e7eb;
+            margin-bottom: 28px;
+            font-size: 1.5em;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: rgba(229, 231, 235, 0.8);
+            font-weight: 600;
+            font-size: 0.875em;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1.5px solid rgba(99, 102, 241, 0.3);
+            border-radius: 14px;
+            font-size: 0.95em;
+            font-family: inherit;
+            color: #e5e7eb;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(30, 41, 59, 0.7);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-group input::placeholder,
+        .input-group textarea::placeholder {
+            color: rgba(229, 231, 235, 0.3);
+        }
+
+        .input-group select {
+            cursor: pointer;
+        }
+
+        .input-group select option {
+            background: #1a1f3a;
+            color: #e5e7eb;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .expense-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .expense-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .expense-list::-webkit-scrollbar-track {
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 10px;
+        }
+
+        .expense-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            margin-bottom: 12px;
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .expense-item:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateX(4px);
+        }
+
+        .expense-details {
+            flex: 1;
+        }
+
+        .expense-details h4 {
+            color: #e5e7eb;
+            margin-bottom: 8px;
+            font-size: 1em;
+            font-weight: 700;
+        }
+
+        .expense-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8em;
+            color: rgba(229, 231, 235, 0.5);
+            align-items: center;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .expense-amount {
+            font-size: 1.4em;
+            font-weight: 800;
+            color: #f87171;
+            margin-right: 12px;
+        }
+
+        .delete-btn {
+            padding: 10px 18px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-section select {
+            padding: 11px 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1.5px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            font-size: 0.875em;
+            color: #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-section select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .filter-section select option {
+            background: #1a1f3a;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 30px;
+            color: rgba(229, 231, 235, 0.4);
+        }
+
+        .empty-state p {
+            font-size: 1em;
+            margin-top: 12px;
+        }
+
+        .auth-message {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 14px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .auth-message.success {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .auth-message.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 24px;
+            color: rgba(229, 231, 235, 0.6);
+            font-size: 0.9em;
+        }
+
+        .switch-form a {
+            color: #8b5cf6;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .switch-form a:hover {
+            color: #a78bfa;
+        }
+
+        /* Budget Section - Modern */
+        .budget-wrapper {
+            margin-bottom: 24px;
+        }
+
+        .budget-card {
+            background: rgba(26, 31, 58, 0.6);
+            border: 1.5px solid rgba(99, 102, 241, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .budget-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .budget-icon {
+            font-size: 2.5em;
+        }
+
+        .budget-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .budget-controls {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        .budget-input-wrapper label {
+            display: block;
+            margin-bottom: 12px;
+            color: rgba(229, 231, 235, 0.8);
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .budget-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1.5px solid rgba(99, 102, 241, 0.3);
+            border-radius: 14px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .budget-input-group:focus-within {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .currency-symbol {
+            padding: 0 14px;
+            font-size: 1.2em;
+            font-weight: 800;
+            color: #8b5cf6;
+        }
+
+        .budget-input-group input {
+            flex: 1;
+            padding: 13px 8px;
+            background: transparent;
+            border: none;
+            color: #e5e7eb;
+            font-size: 1.1em;
+            font-weight: 700;
+        }
+
+        .budget-input-group input:focus {
+            outline: none;
+        }
+
+        .budget-input-group button {
+            padding: 13px 30px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .budget-input-group button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .budget-tips {
+            position: relative;
+            z-index: 1;
+            margin-top: 16px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 14px;
+            color: rgba(229, 231, 235, 0.7);
+        }
+
+        .tip-icon {
+            font-size: 1.4em;
+        }
+
+        .tip-text {
+            font-size: 0.85em;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* Budget Status - Modern */
+        .budget-status {
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            font-weight: 700;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease;
+        }
+
+        .budget-status.safe {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1.5px solid rgba(34, 197, 94, 0.4);
+            color: #4ade80;
+        }
+
+        .budget-status.warning {
+            background: rgba(251, 191, 36, 0.15);
+            border: 1.5px solid rgba(251, 191, 36, 0.4);
+            color: #fbbf24;
+        }
+
+        .budget-status.danger {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1.5px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        .budget-progress {
+            margin-top: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.6s ease;
+        }
+
+        .progress-fill.safe {
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #f87171, #dc2626);
+        }
+
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.75em;
+            }
+
+            .user-info {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .logout-btn {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 24px;
+            }
+
+            .stat-card .amount {
+                font-size: 2em;
+            }
+
+            .expense-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .expense-amount {
+                margin-right: 0;
+                font-size: 1.6em;
+            }
+
+            .login-box {
+                padding: 40px 30px;
+            }
+
+            .logo h1 {
+                font-size: 2.2em;
+            }
+
+            .card {
+                padding: 28px 24px;
+            }
+
+            .card h2 {
+                font-size: 1.3em;
+            }
+
+            .filter-section {
+                flex-direction: column;
+            }
+
+            .filter-section select,
+            .filter-section .add-btn {
+                width: 100%;
+            }
+
+            .budget-input-group {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+
+            .budget-input-group button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+
+            .login-box {
+                padding: 32px 24px;
+            }
+
+            .logo h1 {
+                font-size: 2em;
+            }
+
+            .logo-image {
+                width: 70px;
+                height: 70px;
+            }
+
+            .header {
+                padding: 18px;
+            }
+
+            .card {
+                padding: 24px 20px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .expense-item {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <div class="logo">
+                <div class="logo-image">
+                    <!-- Replace the src with your logo image URL -->
+                    <img src="https://cdn-icons-png.flaticon.com/512/2721/2721245.png" alt="Noura Logo" id="logoImage">
+                </div>
+                <h1>NOURA</h1>
+                <p>Smart Expense Management</p>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+                <div class="switch-form">
+                    Don't have an account? 
+                    <a href="#" id="showSignup">Sign Up</a>
+                </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" required placeholder="Choose a username" minlength="3">
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Choose a password" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+                </div>
+                <button type="submit" class="btn">Create Account</button>
+                <div class="switch-form">
+                    Already have an account? 
+                    <a href="#" id="showLogin">Sign In</a>
+                </div>
+            </form>
+
+            <div class="auth-message" id="authMessage"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="container">
+            <div class="header">
+                <h1>NOURA</h1>
+                <div class="user-info">
+                    <div class="user-badge">
+                        <div class="user-avatar" id="userAvatar">N</div>
+                        <span class="user-name" id="userName"></span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <h3>Total Expenses</h3>
+                    <div class="amount" id="totalExpenses">K 0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h3>This Month</h3>
+                    <div class="amount" id="monthExpenses">K 0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h3>This Week</h3>
+                    <div class="amount" id="weekExpenses">K 0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Today</h3>
+                    <div class="amount" id="todayExpenses">K 0.00</div>
+                </div>
+            </div>
+
+            <div class="budget-wrapper">
+                <div class="card budget-card">
+                    <div class="budget-header">
+                        <div class="budget-icon">💰</div>
+                        <h2>Budget Manager</h2>
+                    </div>
+                    
+                    <div class="budget-controls">
+                        <div class="budget-input-wrapper">
+                            <label for="monthlyBudget">Set Monthly Budget</label>
+                            <div class="budget-input-group">
+                                <span class="currency-symbol">K</span>
+                                <input type="number" id="monthlyBudget" step="0.01" placeholder="5000.00">
+                                <button type="button" id="setBudgetBtn">Set Budget</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="budgetStatus"></div>
+                    
+                    <div class="budget-tips">
+                        <div class="tip-item">
+                            <span class="tip-icon">💡</span>
+                            <span class="tip-text">Set a realistic budget to track your spending effectively</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="card">
+                    <h2>Add Expense</h2>
+                    <form id="expenseForm">
+                        <div class="input-group">
+                            <label for="expenseName">Expense Name</label>
+                            <input type="text" id="expenseName" required placeholder="e.g., Groceries">
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="amount">Amount (ZMW)</label>
+                                <input type="number" id="amount" step="0.01" required placeholder="0.00">
+                            </div>
+                            <div class="input-group">
+                                <label for="category">Category</label>
+                                <select id="category" required>
+                                    <option value="">Select category</option>
+                                    <option value="Food">🍔 Food</option>
+                                    <option value="Transport">🚗 Transport</option>
+                                    <option value="Utilities">⚡ Utilities</option>
+                                    <option value="Entertainment">🎮 Entertainment</option>
+                                    <option value="Healthcare">🏥 Healthcare</option>
+                                    <option value="Shopping">🛍️ Shopping</option>
+                                    <option value="Education">📚 Education</option>
+                                    <option value="Other">📌 Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="notes">Notes (Optional)</label>
+                            <textarea id="notes" placeholder="Add additional details..."></textarea>
+                        </div>
+                        <button type="submit" class="add-btn">Add Expense</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Recent Expenses</h2>
+                    <div class="filter-section">
+                        <select id="filterCategory">
+                            <option value="">All Categories</option>
+                            <option value="Food">🍔 Food</option>
+                            <option value="Transport">🚗 Transport</option>
+                            <option value="Utilities">⚡ Utilities</option>
+                            <option value="Entertainment">🎮 Entertainment</option>
+                            <option value="Healthcare">🏥 Healthcare</option>
+                            <option value="Shopping">🛍️ Shopping</option>
+                            <option value="Education">📚 Education</option>
+                            <option value="Other">📌 Other</option>
+                        </select>
+                        <select id="filterPeriod">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                        <button id="exportBtn" class="add-btn" style="width: auto; padding: 11px 18px; font-size: 0.875em;">Export CSV</button>
+                    </div>
+                    <div class="expense-list" id="expenseList">
+                        <div class="empty-state">
+                            <p>No expenses yet. Add your first expense!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+<!-- Firebase COMPAT SDKs (NO MODULES) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfEEFrni0vpYWy8GGf1NO1Fn-HOM_4opY",
+  authDomain: "noura-expense-tracker-cdc77.firebaseapp.com",
+  projectId: "noura-expense-tracker-cdc77",
+  storageBucket: "noura-expense-tracker-cdc77.firebasestorage.app",
+  messagingSenderId: "813207115984",
+  appId: "1:813207115984:web:acc588b97de7bd5532e6d5"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const database = firebase.database();
+</script>
+
+
+    <script>
+        // State Management
+        console.log("AUTH OBJECT:", auth);
+
+        let currentUser = null;
+        let expenses = [];
+        let monthlyBudget = 0;
+
+        // DOM Elements
+        const loginPage = document.getElementById('loginPage');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const expenseForm = document.getElementById('expenseForm');
+        const expenseList = document.getElementById('expenseList');
+        const userName = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
+        const filterCategory = document.getElementById('filterCategory');
+        const filterPeriod = document.getElementById('filterPeriod');
+        const showSignup = document.getElementById('showSignup');
+        const showLogin = document.getElementById('showLogin');
+        const authMessage = document.getElementById('authMessage');
+        const setBudgetBtn = document.getElementById('setBudgetBtn');
+        const monthlyBudgetInput = document.getElementById('monthlyBudget');
+        const budgetStatus = document.getElementById('budgetStatus');
+        const exportBtn = document.getElementById('exportBtn');
+
+        // Set today's date as default
+        document.getElementById('date').valueAsDate = new Date();
+
+        // Toggle between login and signup
+        showSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+            authMessage.style.display = 'none';
+        });
+
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            authMessage.style.display = 'none';
+        });
+
+        // Show message helper
+        function showMessage(message, isError = false) {
+            authMessage.textContent = message;
+            authMessage.style.display = 'block';
+            authMessage.className = 'auth-message ' + (isError ? 'error' : 'success');
+        }
+
+        // Signup Handler
+        signupForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(
+      signupEmail.value,
+      signupPassword.value
+    );
+
+    await database.ref('users/' + userCredential.user.uid + '/profile').set({
+      username: signupUsername.value,
+      email: signupEmail.value,
+      createdAt: new Date().toISOString()
+    });
+
+    showMessage("Account created successfully!");
+    signupForm.reset();
+  } catch (error) {
+    showMessage(error.message, true);
+  }
+});
+
+
+        // Login Handler
+        loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(
+      loginUsername.value,
+      loginPassword.value
+    );
+
+    currentUser = userCredential.user;
+    userName.textContent = currentUser.email;
+    userAvatar.textContent = currentUser.email.charAt(0).toUpperCase();
+
+    loginPage.style.display = 'none';
+    dashboard.classList.add('active');
+
+    loadExpenses();
+    loadBudget();
+  } catch (error) {
+    showMessage("Invalid login details", true);
+  }
+});
+
+
+        // Logout Handler
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            expenses = [];
+            monthlyBudget = 0;
+            sessionStorage.removeItem('nouraUser');
+            dashboard.classList.remove('active');
+            loginPage.style.display = 'flex';
+            loginForm.reset();
+            signupForm.reset();
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            authMessage.style.display = 'none';
+        });
+
+        // Add Expense Handler
+        expenseForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const expense = {
+                id: Date.now(),
+                name: document.getElementById('expenseName').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                category: document.getElementById('category').value,
+                date: document.getElementById('date').value,
+                notes: document.getElementById('notes').value,
+                timestamp: new Date().toISOString()
+            };
+
+            expenses.push(expense);
+            saveExpenses();
+            expenseForm.reset();
+            document.getElementById('date').valueAsDate = new Date();
+            updateUI();
+            checkBudget();
+        });
+
+        // Budget Management
+        setBudgetBtn.addEventListener('click', () => {
+            const budget = parseFloat(monthlyBudgetInput.value);
+            if (budget && budget > 0) {
+                monthlyBudget = budget;
+                saveBudget();
+                checkBudget();
+            }
+        });
+
+        function saveBudget() {
+            if (!currentUser) return;
+            try {
+                localStorage.setItem(`noura_budget_${currentUser}`, JSON.stringify(monthlyBudget));
+            } catch (error) {
+                console.error('Error saving budget:', error);
+            }
+        }
+
+        function loadBudget() {
+            if (!currentUser) return;
+            try {
+                const data = localStorage.getItem(`noura_budget_${currentUser}`);
+                if (data) {
+                    monthlyBudget = JSON.parse(data);
+                    monthlyBudgetInput.value = monthlyBudget;
+                    checkBudget();
+                }
+            } catch (error) {
+                console.error('Error loading budget:', error);
+                monthlyBudget = 0;
+            }
+        }
+
+        function checkBudget() {
+            if (!monthlyBudget || monthlyBudget === 0) {
+                budgetStatus.innerHTML = '';
+                return;
+            }
+
+            const now = new Date();
+            const monthTotal = expenses
+                .filter(exp => {
+                    const expDate = new Date(exp.date);
+                    return expDate.getMonth() === now.getMonth() && 
+                           expDate.getFullYear() === now.getFullYear();
+                })
+                .reduce((sum, exp) => sum + exp.amount, 0);
+
+            const percentage = (monthTotal / monthlyBudget) * 100;
+            const remaining = monthlyBudget - monthTotal;
+
+            let statusClass = 'safe';
+            let statusEmoji = '✅';
+            let statusMessage = `You're within budget!`;
+            let statusDetail = `K ${remaining.toFixed(2)} remaining`;
+
+            if (percentage >= 100) {
+                statusClass = 'danger';
+                statusEmoji = '🚨';
+                statusMessage = 'Budget Exceeded!';
+                statusDetail = `Over by K ${Math.abs(remaining).toFixed(2)}`;
+            } else if (percentage >= 80) {
+                statusClass = 'warning';
+                statusEmoji = '⚠️';
+                statusMessage = 'Approaching Limit';
+                statusDetail = `K ${remaining.toFixed(2)} remaining`;
+            }
+
+            budgetStatus.className = `budget-status ${statusClass}`;
+            budgetStatus.innerHTML = `
+                <div style="font-size: 2.5em; margin-bottom: 8px;">${statusEmoji}</div>
+                <div style="font-size: 1.2em; font-weight: 800; margin-bottom: 4px;">${statusMessage}</div>
+                <div style="font-size: 1em; opacity: 0.9; margin-bottom: 12px;">${statusDetail}</div>
+                <div class="budget-progress">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8em; margin-bottom: 6px;">
+                        <span>Spent: K ${monthTotal.toFixed(2)}</span>
+                        <span>Budget: K ${monthlyBudget.toFixed(2)}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${statusClass}" style="width: ${Math.min(percentage, 100)}%"></div>
+                    </div>
+                    <div style="margin-top: 6px; font-size: 0.85em; font-weight: 700;">
+                        ${percentage.toFixed(1)}% Used
+                    </div>
+                </div>
+            `;
+        }
+
+        // Export Data
+        exportBtn.addEventListener('click', () => {
+            if (expenses.length === 0) {
+                alert('No expenses to export!');
+                return;
+            }
+
+            const filtered = filterExpenses();
+            const csv = generateCSV(filtered);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `noura_expenses_${currentUser}_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        function generateCSV(expensesToExport) {
+            const headers = ['Date', 'Name', 'Category', 'Amount (ZMW)', 'Notes'];
+            const rows = expensesToExport.map(exp => [
+                exp.date,
+                exp.name,
+                exp.category,
+                exp.amount.toFixed(2),
+                exp.notes || ''
+            ]);
+
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+
+            return csvContent;
+        }
+
+        // Filter Handlers
+        filterCategory.addEventListener('change', updateUI);
+        filterPeriod.addEventListener('change', updateUI);
+
+        // Delete Expense
+        window.deleteExpense = function(id) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                expenses = expenses.filter(exp => exp.id !== id);
+                saveExpenses();
+                updateUI();
+                checkBudget();
+            }
+        };
+
+        // Update UI
+        function updateUI() {
+            const filtered = filterExpenses();
+            displayExpenses(filtered);
+            updateStats();
+        }
+
+        // Filter Expenses
+        function filterExpenses() {
+            let filtered = [...expenses];
+
+            const categoryFilter = filterCategory.value;
+            if (categoryFilter) {
+                filtered = filtered.filter(exp => exp.category === categoryFilter);
+            }
+
+            const periodFilter = filterPeriod.value;
+            const now = new Date();
+            
+            if (periodFilter === 'today') {
+                filtered = filtered.filter(exp => {
+                    const expDate = new Date(exp.date);
+                    return expDate.toDateString() === now.toDateString();
+                });
+            } else if (periodFilter === 'week') {
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                filtered = filtered.filter(exp => new Date(exp.date) >= weekAgo);
+            } else if (periodFilter === 'month') {
+                filtered = filtered.filter(exp => {
+                    const expDate = new Date(exp.date);
+                    return expDate.getMonth() === now.getMonth() && 
+                           expDate.getFullYear() === now.getFullYear();
+                });
+            }
+
+            return filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        // Display Expenses
+        function displayExpenses(expensesToShow) {
+            if (expensesToShow.length === 0) {
+                expenseList.innerHTML = `
+                    <div class="empty-state">
+                        <p>No expenses found for the selected filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            expenseList.innerHTML = expensesToShow.map(exp => `
+                <div class="expense-item">
+                    <div class="expense-details">
+                        <h4>${exp.name}</h4>
+                        <div class="expense-meta">
+                            <span class="category-badge">${exp.category}</span>
+                            <span>${new Date(exp.date).toLocaleDateString('en-GB')}</span>
+                        </div>
+                        ${exp.notes ? `<p style="color: rgba(229,231,235,0.5); font-size: 0.8em; margin-top: 6px;">${exp.notes}</p>` : ''}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="expense-amount">K ${exp.amount.toFixed(2)}</div>
+                        <button class="delete-btn" onclick="deleteExpense(${exp.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update Statistics
+        function updateStats() {
+            const now = new Date();
+            
+            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            document.getElementById('totalExpenses').textContent = `K ${total.toFixed(2)}`;
+
+            const monthTotal = expenses
+                .filter(exp => {
+                    const expDate = new Date(exp.date);
+                    return expDate.getMonth() === now.getMonth() && 
+                           expDate.getFullYear() === now.getFullYear();
+                })
+                .reduce((sum, exp) => sum + exp.amount, 0);
+            document.getElementById('monthExpenses').textContent = `K ${monthTotal.toFixed(2)}`;
+
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const weekTotal = expenses
+                .filter(exp => new Date(exp.date) >= weekAgo)
+                .reduce((sum, exp) => sum + exp.amount, 0);
+            document.getElementById('weekExpenses').textContent = `K ${weekTotal.toFixed(2)}`;
+
+            const todayTotal = expenses
+                .filter(exp => new Date(exp.date).toDateString() === now.toDateString())
+                .reduce((sum, exp) => sum + exp.amount, 0);
+            document.getElementById('todayExpenses').textContent = `K ${todayTotal.toFixed(2)}`;
+        }
+
+        // Storage Functions
+        function saveExpenses() {
+            if (!currentUser) return;
+            try {
+                localStorage.setItem(`noura_expenses_${currentUser}`, JSON.stringify(expenses));
+            } catch (error) {
+                console.error('Error saving expenses:', error);
+            }
+        }
+
+        function loadExpenses() {
+            if (!currentUser) return;
+            try {
+                const data = localStorage.getItem(`noura_expenses_${currentUser}`);
+                if (data) {
+                    expenses = JSON.parse(data);
+                    updateUI();
+                }
+            } catch (error) {
+                console.error('Error loading expenses:', error);
+                expenses = [];
+            }
+        }
+
+        // Check for existing session
+        window.addEventListener('load', () => {
+            const savedUser = sessionStorage.getItem('nouraUser');
+            if (savedUser) {
+                currentUser = savedUser;
+                userName.textContent = savedUser;
+                userAvatar.textContent = savedUser.charAt(0).toUpperCase();
+                loadExpenses();
+                loadBudget();
+                loginPage.style.display = 'none';
+                dashboard.classList.add('active');
+            }
+        });
+    </script>
+       
+     
+</body>
+</html>
