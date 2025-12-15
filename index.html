@@ -1191,6 +1191,16 @@
             </div>
         </div>
     </div>
+</body>
+    <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("service-worker.js")
+      .then(() => console.log("Service Worker registered"))
+      .catch(err => console.error("SW error", err));
+  }
+</script>
+
 
 
     
@@ -1627,17 +1637,12 @@
             }
         });
     </script>
-        <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("service-worker.js")
-      .then(() => console.log("Service Worker registered"));
-  }
-</script>
-       
+  
+     
      
 </body>
 </html>
+
 
 
 
